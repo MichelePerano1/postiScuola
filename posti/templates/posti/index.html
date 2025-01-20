@@ -1,0 +1,284 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Generatore di posti</title>
+    <style>
+        body{
+    font-family: Arial;
+}
+
+.form{
+    margin:0;
+    margin-bottom: 50px;
+}
+
+.containerPosti{
+    display:flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    align-items: center;
+    width:100%;
+    background-color: lightgray;
+    padding: 10px 0;
+}
+
+.form-label{
+    margin-top:20px;
+}
+.cattedra{
+    display: block;
+    margin: 0;
+    padding: 20px 50px 20px 50px;
+    border: 2px;
+    border-color: rgb(139,69,19);
+    border-style: solid;
+    background-color: rgba(222,184,135,0.8);
+    margin-bottom: 10px;
+}
+.cattedra p{
+    margin: 0;
+    font-size: 50px;
+    font-weight: bold;
+}
+.formIn.prima-riga , .formIn.seconda-riga,.formOut.prima-riga, .formOut.seconda-riga{
+    margin-right:50px;
+}
+.formOut{
+    justify-content: center;
+}
+
+.btnCont{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    margin:18px;
+    height:100px;
+}
+
+
+.subBtn{
+    font-size: 30px;
+    padding:20px;
+    border: 0;
+    border-radius: 5px;
+    background-color: rgba(255, 255, 0, 1);
+    transition: background-color 0.5s, padding 0.3s;
+}
+.subBtn:hover{
+    background-color: rgba(255, 128, 0, 0.805);
+    padding:25px;
+}
+        .fila{
+    display: flex;
+    flex-direction: row;
+    width:100%;
+    height:110px;
+    align-items:center;
+    margin-bottom: 10px;
+}
+        .formIn, .formOut{
+            display: flex;
+            flex-direction: column;
+            flex:1;
+            height:100px;
+            background-color: aqua;
+            border:4px;
+            border-color: black;
+            border-style:solid;
+            border-radius: 4px;
+            align-items: center;
+            flex-wrap: wrap;
+            margin: 15px 5px 0 5px;
+            justify-content: center;
+            transition: padding 0.3s, margin-left 0.3s, margin-right 0.3s;
+            
+}
+.formIn:hover, .formOut:hover{
+    padding: 5px;
+    margin-left:0;
+    margin-right:0;
+
+}
+.formBox{
+    border: 2px;
+    border-color: black;
+    border-style: solid;
+    border-radius: 4px;
+    flex:0.6;
+    width:80%;
+    
+}
+.formBox::placeholder, .formBox::-webkit-input-placeholder, .formBox::-moz-placeholder{
+    opacity:0.7;
+}
+
+.formIn.prima-riga:hover , .formIn.seconda-riga:hover,.formOut.prima-riga:hover, .formOut.seconda-riga:hover{
+    margin-right:45px;
+}
+
+.errorFormIn {
+    background-color: red !important;
+    }
+    </style>
+
+    <link rel="stylesheet" href="{% static 'posti/styles.css' %}">
+</head>
+<body>
+    {% load widget_tweaks %}
+    {% load custom_filters %}
+  <!--  FORM  -->
+    
+    <form method="POST" class="form">
+        {% csrf_token %}
+        <div class="containerPosti">
+            <div class="cattedra">
+                <p>CATTEDRA</p>
+            </div>
+            <div class="fila">
+                {%for field in form %}
+                {% if forloop.counter0 < 7 %}
+                <div class="formIn 
+                                {% if results|index:forloop.counter0 == 'error' %} errorFormIn
+                                {% endif %}
+                                {% if forloop.counter0|modulo:7 == 2 %} prima-riga 
+                                {% elif forloop.counter0|modulo:7 == 4 %} seconda-riga 
+                                {% endif %}
+                                ">
+                    <div>
+                        <p class="form-label">{{ field.label }}</p></div>
+                    {{ field|add_class:"formBox"}}
+                </div>
+                {% endif %}
+                {% endfor %}
+            </div>
+            <div class="fila">
+                {%for field in form %}
+                {% if forloop.counter0 >= 7  and forloop.counter0 < 14%}
+                <div class="formIn 
+                                {% if results|index:forloop.counter0 == 'error' %} errorFormIn
+                                {% endif %}
+                                {% if forloop.counter0|modulo:7 == 2 %} prima-riga 
+                                {% elif forloop.counter0|modulo:7 == 4 %} seconda-riga 
+                                {% endif %}">
+                    <div><p class="form-label">{{ field.label }}</p></div>
+                    {{ field|add_class:"formBox" }}
+                </div>
+                {% endif %}
+                {% endfor %}
+            </div>
+            <div class="fila">
+                {%for field in form %}
+                {% if forloop.counter0 >= 14 %}
+                <div class="formIn
+                                {% if results|index:forloop.counter0 == 'error' %} errorFormIn
+                                {% endif %}
+                                {% if forloop.counter0|modulo:7 == 2 %} prima-riga 
+                                {% elif forloop.counter0|modulo:7 == 4 %} seconda-riga 
+                                {% endif %}">
+                    <div><p class="form-label">{{ field.label }}</p></div>
+                    {{ field|add_class:"formBox" }}
+                </div>
+                {% endif %}
+                {% endfor %}
+            </div>
+
+           
+
+        </div>
+        <div class="btnCont">
+             <button type="submit" class="subBtn">Generare posti</button>
+        </div>
+    </form>
+
+  <!--    SE   non   C'è IL SUBMIT-->
+
+    {% if not results or error == 1 %}
+    <div class="containerPosti">
+        <div class="cattedra">
+            <p>CATTEDRA</p>
+        </div>
+        <div class="fila">
+            {%for field in form %}
+            {% if forloop.counter0 < 7 %}
+            <div class="formIn 
+                            {% if forloop.counter0|modulo:7 == 2 %} prima-riga 
+                            {% elif forloop.counter0|modulo:7 == 4 %} seconda-riga 
+                            {% endif %}">
+                <div><p class="form-label"></p></div>
+                </div>
+                {% endif %}
+                {% endfor %}
+            </div>
+            <div class="fila">
+                {%for field in form %}
+                {% if forloop.counter0 >= 7  and forloop.counter0 < 14%}
+                <div class="formIn 
+                                {% if forloop.counter0|modulo:7 == 2 %} prima-riga 
+                                {% elif forloop.counter0|modulo:7 == 4 %} seconda-riga 
+                                {% endif %}">
+                    <div><p class="form-label"></p></div>
+                </div>
+                {% endif %}
+                {% endfor %}
+            </div>
+            <div class="fila">
+                {%for field in form %}
+                {% if forloop.counter0 >= 14 %}
+                <div class="formIn
+                                {% if forloop.counter0|modulo:7 == 2 %} prima-riga 
+                                {% elif forloop.counter0|modulo:7 == 4 %} seconda-riga 
+                                {% endif %}">
+                    <div><p class="form-label"></p></div>
+                </div>
+                {% endif %}
+            {% endfor %}
+    </div>
+        <!--    SE C'è IL SUBMIT-->
+    {% else %}
+    <div class="containerPosti">
+        <div class="cattedra">
+            <p>CATTEDRA</p>
+        </div>
+        <div class="fila">
+            {%for nome in results %}
+            {% if forloop.counter0 < 7 %}
+            <div class="formOut 
+                            {% if forloop.counter0|modulo:7 == 2 %} prima-riga 
+                            {% elif forloop.counter0|modulo:7 == 4 %} seconda-riga 
+                            {% endif %}">
+                <div><p class="form-label">{{nome}}</p></div>
+                </div>
+                {% endif %}
+                {% endfor %}
+            </div>
+            <div class="fila">
+                {%for nome in results %}
+                {% if forloop.counter0 >= 7  and forloop.counter0 < 14%}
+                <div class="formOut 
+                                {% if forloop.counter0|modulo:7 == 2 %} prima-riga 
+                                {% elif forloop.counter0|modulo:7 == 4 %} seconda-riga 
+                                {% endif %}">
+                    <div><p class="form-label">{{nome}}</p></div>
+                </div>
+                {% endif %}
+                {% endfor %}
+            </div>
+            <div class="fila">
+                {%for nome in results %}
+                {% if forloop.counter0 >= 14 %}
+                <div class="formOut
+                                {% if forloop.counter0|modulo:7 == 2 %} prima-riga 
+                                {% elif forloop.counter0|modulo:7 == 4 %} seconda-riga 
+                                {% endif %}">
+                    <div><p class="form-label"></p>{{nome}}</div>
+                </div>
+                {% endif %}
+            {% endfor %}
+    </div>
+    {% endif %}
+
+
+</body>
+</html>

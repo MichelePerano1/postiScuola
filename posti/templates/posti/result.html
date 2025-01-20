@@ -1,0 +1,44 @@
+{% load widget_tweaks %}
+    {% load custom_filters %}
+
+
+<div class="containerPosti">
+    <div class="cattedra">
+        <p>CATTEDRA</p>
+    </div>
+    <div class="fila">
+        {%for nome in results %}
+        {% if forloop.counter0 < 7 %}
+        <div class="formOut 
+                        {% if forloop.counter0|modulo:7 == 2 %} prima-riga 
+                        {% elif forloop.counter0|modulo:7 == 4 %} seconda-riga 
+                        {% endif %}">
+            <div><p class="form-label">{{nome}}</p></div>
+            </div>
+            {% endif %}
+            {% endfor %}
+        </div>
+        <div class="fila">
+            {%for nome in results %}
+            {% if forloop.counter0 >= 7  and forloop.counter0 < 14%}
+            <div class="formOut 
+                            {% if forloop.counter0|modulo:7 == 2 %} prima-riga 
+                            {% elif forloop.counter0|modulo:7 == 4 %} seconda-riga 
+                            {% endif %}">
+                <div><p class="form-label">{{nome}}</p></div>
+            </div>
+            {% endif %}
+            {% endfor %}
+        </div>
+        <div class="fila">
+            {%for nome in results %}
+            {% if forloop.counter0 >= 14 %}
+            <div class="formOut
+                            {% if forloop.counter0|modulo:7 == 2 %} prima-riga 
+                            {% elif forloop.counter0|modulo:7 == 4 %} seconda-riga 
+                            {% endif %}">
+                <div><p class="form-label"></p>{{nome}}</div>
+            </div>
+            {% endif %}
+        {% endfor %}
+</div>
